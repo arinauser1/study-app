@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#6c5ce7">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Study Space">
+<link rel="apple-touch-icon" href="icon-192.png">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Study Space</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Quicksand:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-gradient: linear-gradient(135deg, #fdfbf7 0%, #e8f4f8 100%);
+    --card-bg: rgba(255, 255, 255, 0.95);
+    --primary: #b8c0ff;
+    --primary-hover: #a2acff;
+    --secondary: #d4c1ec;
+    --text-main: #4a4e69;
+    --text-muted: #8d99ae;
+    --accent-green: #95d5b2;
+    --accent-warn: #ffd166;
+    --danger: #ef476f;
+    --shadow: 0 8px 24px rgba(149, 157, 165, 0.1);
+    --shadow-hover: 0 12px 32px rgba(149, 157, 165, 0.15);
+    --radius: 16px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg-gradient);
+    color: var(--text-main);
+    min-height: 100vh;
+    padding: 12px;
+    font-size: 16px;
+    line-height: 1.5;
+  }
+
+  .container {
+    max-width: 1000px;
+    margin: 0 auto;
+    background: var(--card-bg);
+    border-radius: 24px;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(10px);
+  }
+
+  header {
+    background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+    padding: 20px;
+    text-align: center;
+    color: var(--text-main);
+  }
+
+  header h1 {
+    font-family: 'Quicksand', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .week-nav {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    margin-top: 12px;
+  }
+
+  .week-nav button {
+    background: rgba(255,255,255,0.5);
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    color: var(--text-main);
+    transition: 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .week-nav button:hover { background: rgba(255,255,255,0.8); }
+
+  .week-info {
+    text-align: center;
+  }
+
+  .week-dates {
+    font-family: 'Quicksand', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-main);
+  }
+
+  .week-type {
+    font-size: 13px;
+    color: rgba(74, 78, 105, 0.7);
+    font-weight: 600;
+    margin-top: 2px;
+  }
+
+  .tabs {
+    display: flex;
+    background: rgba(255, 255, 255, 0.5);
+    border-bottom: 1px solid rgba(0,0,0,0.05);
+  }
+
+  .tab {
+    flex: 1;
+    padding: 14px;
+    text-align: center;
+    cursor: pointer;
+    font-family: 'Quicksand', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    border: none;
+    background: transparent;
+    color: var(--text-muted);
+    transition: all 0.2s ease;
+    position: relative;
+  }
+
+  .tab.active {
+    color: #6c5ce7;
+    background: rgba(255, 255, 255, 0.8);
+  }
+
+  .tab.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 20%;
+    right: 20%;
+    height: 3px;
+    background: #6c5ce7;
+    border-radius: 3px 3px 0 0;
+  }
+
+  .content { padding: 20px; }
+
+  .days-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 16px;
+  }
+
+  .day-card {
+    background: #ffffff;
+    border-radius: var(--radius);
+    padding: 16px;
+    border: 1px solid #f0f0f5;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+  }
+
+  .day-card h3 {
+    font-family: 'Quicksand', sans-serif;
+    color: #6c5ce7;
+    font-size: 16px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .day-date {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #f0f0f5;
+  }
+
+  .lesson {
+    background: #f8f9fc;
+    border-radius: 12px;
+    padding: 14px;
+    margin: 10px 0;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+    border-left: 4px solid var(--primary);
+  }
+
+  .lesson:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-hover);
+    background: #ffffff;
+  }
+
+  .lesson-time {
+    font-size: 13px;
+    color: #6c5ce7;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+  }
+
+  .lesson-name {
+    font-size: 17px;
+    color: var(--text-main);
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .lesson-teacher {
+    font-size: 14px;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  .lesson-markers {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    display: flex;
+    gap: 6px;
+  }
+
+  .marker {
+    font-size: 11px;
+    font-weight: 800;
+    padding: 4px 8px;
+    border-radius: 20px;
+  }
+
+  .marker.hw { background: #fff3cd; color: #856404; }
+  .marker.fl { background: #d4edda; color: #155724; }
+
+  .add-btn {
+    width: 100%;
+    padding: 12px;
+    background: var(--primary);
+    color: #4a4e69;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    margin-top: 8px;
+    font-family: 'Nunito', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    transition: all 0.2s ease;
+  }
+
+  .add-btn:hover { background: var(--primary-hover); transform: translateY(-1px); }
+
+  .delete-btn {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background: rgba(239, 71, 111, 0.1);
+    color: var(--danger);
+    border: none;
+    padding: 4px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+  }
+
+  .lesson:hover .delete-btn { opacity: 1; }
+
+  /* Дедлайны / Календарь */
+  .deadline-item {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    border-left: 4px solid #6c5ce7;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.03);
+  }
+
+  .deadline-date {
+    font-size: 13px;
+    font-weight: 800;
+    color: #6c5ce7;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 6px;
+  }
+
+  .deadline-subject {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 4px;
+  }
+
+  .deadline-hw {
+    font-size: 15px;
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: 8px;
+  }
+
+  .deadline-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .deadline-link {
+    font-size: 13px;
+    color: #6c5ce7;
+    text-decoration: none;
+    background: #f0f0ff;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-weight: 600;
+  }
+
+  .empty {
+    text-align: center;
+    color: var(--text-muted);
+    padding: 40px 20px;
+    font-size: 15px;
+    font-weight: 600;
+  }
+
+  /* Modal */
+  .modal {
+    display: none;
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(74, 78, 105, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .modal.active { display: flex; }
+
+  .modal-content {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: 28px;
+    max-width: 480px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+  }
+
+  .modal-content h2 {
+    font-family: 'Quicksand', sans-serif;
+    font-size: 20px;
+    color: #6c5ce7;
+    margin-bottom: 20px;
+    font-weight: 700;
+  }
+
+  .modal-section {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px dashed #e9ecef;
+  }
+
+  .modal-section-title {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 12px;
+  }
+
+  .form-group { margin-bottom: 16px; }
+
+  .form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-muted);
+  }
+
+  .form-group input, .form-group textarea, .form-group select {
+    width: 100%;
+    padding: 12px 16px;
+    background: #f8f9fc;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    color: var(--text-main);
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    outline: none;
+    transition: all 0.2s ease;
+  }
+
+  .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+    border-color: var(--primary);
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(184, 192, 255, 0.2);
+  }
+
+  .form-group select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%234a4e69' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 16px center;
+  }
+
+  .form-group textarea { resize: vertical; min-height: 90px; }
+
+  .modal-buttons { display: flex; gap: 12px; margin-top: 24px; }
+
+  .btn {
+    flex: 1;
+    padding: 14px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    transition: all 0.2s ease;
+  }
+
+  .btn-primary { background: #6c5ce7; color: white; }
+  .btn-primary:hover { background: #5b4cc4; transform: translateY(-1px); }
+  .btn-secondary { background: #f0f0f5; color: var(--text-main); }
+  .btn-secondary:hover { background: #e2e2ea; }
+  .btn-danger { background: rgba(239, 71, 111, 0.1); color: var(--danger); }
+  .btn-small { padding: 8px 16px; font-size: 13px; margin-top: 8px; flex: none; width: auto; }
+
+  .files-list, .links-list { margin-top: 12px; }
+  .file-item, .link-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    margin: 8px 0;
+    border-radius: 10px;
+    background: #f8f9fc;
+    border: 1px solid #e9ecef;
+  }
+  .link-item { border-left: 3px solid var(--accent-green); }
+  .file-item a, .link-item a {
+    color: #6c5ce7;
+    text-decoration: none;
+    word-break: break-all;
+    flex: 1;
+    font-weight: 600;
+    font-size: 14px;
+  }
+  .mini-del {
+    background: rgba(239, 71, 111, 0.1);
+    color: var(--danger);
+    border: none;
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Nunito', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    margin-left: 8px;
+  }
+
+  .settings-wrap { max-width: 400px; display: flex; flex-direction: column; gap: 12px; }
+  .settings-wrap p {
+    margin-top: 20px;
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.6;
+    background: #f8f9fc;
+    padding: 16px;
+    border-radius: 12px;
+    border-left: 4px solid var(--primary);
+  }
+
+  @media (max-width: 600px) {
+    body { padding: 0; background: #ffffff; }
+    .container { border-radius: 0; box-shadow: none; border: none; }
+    header h1 { font-size: 20px; }
+    .content { padding: 16px; }
+    .days-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <h1>Study Space</h1>
+    <div class="week-nav">
+      <button onclick="changeWeek(-1)">‹</button>
+      <div class="week-info">
+        <div class="week-dates" id="weekDates">Загрузка...</div>
+        <div class="week-type" id="weekType">Чётная неделя</div>
+      </div>
+      <button onclick="changeWeek(1)">›</button>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="schedule">Расписание</button>
+    <button class="tab" data-tab="deadlines">Дедлайны</button>
+    <button class="tab" data-tab="settings">Настройки</button>
+  </div>
+
+  <div class="content">
+    <div id="schedule" class="tab-content">
+      <div class="days-grid" id="daysGrid"></div>
+    </div>
+
+    <div id="deadlines" class="tab-content" style="display:none">
+      <div id="deadlinesList"></div>
+    </div>
+
+    <div id="settings" class="tab-content" style="display:none">
+      <h2 style="font-family:'Quicksand'; color:#6c5ce7; font-size:20px; margin-bottom:16px; font-weight:700">Управление данными</h2>
+      <div class="settings-wrap">
+        <button class="btn btn-primary" onclick="exportData()">Экспорт данных (JSON)</button>
+        <button class="btn btn-primary" onclick="document.getElementById('importFile').click()">Импорт данных</button>
+        <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(event)">
+        <button class="btn btn-danger" onclick="clearAllData()">Очистить все данные</button>
+        <p>Данные хранятся локально. Делай экспорт раз в неделю для резервной копии.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Модалка пары -->
+<div class="modal" id="lessonModal">
+  <div class="modal-content">
+    <h2 id="modalTitle">Пара</h2>
+    
+    <div class="modal-section">
+      <div class="modal-section-title">Параметры пары (шаблон)</div>
+      <div class="form-group">
+        <label>Время</label>
+        <select id="lessonSlot"></select>
+      </div>
+      <div class="form-group">
+        <label>Предмет</label>
+        <input type="text" id="lessonName">
+      </div>
+      <div class="form-group">
+        <label>Преподаватель</label>
+        <input type="text" id="lessonTeacher">
+      </div>
+      <div class="form-group">
+        <label>Аудитория</label>
+        <input type="text" id="lessonRoom">
+      </div>
+    </div>
+
+    <div class="modal-section" style="border-bottom: none; padding-bottom: 0;">
+      <div class="modal-section-title" id="dateSpecificTitle">Материалы на эту дату</div>
+      <div class="form-group">
+        <label>Домашнее задание</label>
+        <textarea id="lessonHomework"></textarea>
+      </div>
+      <div class="form-group">
+        <label>Ссылки на материалы</label>
+        <input type="text" id="newLink">
+        <button class="btn btn-secondary btn-small" onclick="addLink()">Добавить ссылку</button>
+        <div id="linksList" class="links-list"></div>
+      </div>
+      <div class="form-group">
+        <label>Прикрепить файлы</label>
+        <input type="file" id="fileInput" multiple>
+        <div id="filesList" class="files-list"></div>
+      </div>
+    </div>
+
+    <div class="modal-buttons">
+      <button class="btn btn-secondary" onclick="closeModal()">Отмена</button>
+      <button class="btn btn-primary" onclick="saveLesson()">Сохранить</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ============ КОНСТАНТЫ И ДАТЫ ============
+const DAYS = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
+const TIME_SLOTS = [
+  { label: '1 пара · 8:00 - 9:35', time: '8:00 - 9:35' },
+  { label: '2 пара · 9:45 - 11:20', time: '9:45 - 11:20' },
+  { label: '3 пара · 11:50 - 13:25', time: '11:50 - 13:25' },
+  { label: '4 пара · 13:35 - 15:10', time: '13:35 - 15:10' },
+  { label: '5 пара · 15:40 - 17:15', time: '15:40 - 17:15' },
+  { label: '6 пара · 17:25 - 19:00', time: '17:25 - 19:00' },
+];
+
+const slotSelect = document.getElementById('lessonSlot');
+TIME_SLOTS.forEach((s, i) => {
+  const opt = document.createElement('option');
+  opt.value = i;
+  opt.textContent = s.label;
+  slotSelect.appendChild(opt);
+});
+
+let weekOffset = 0; // 0 = текущая неделя, 1 = следующая, -1 = прошлая
+
+function getWeekDates(offset) {
+  const curr = new Date();
+  const day = curr.getDay();
+  const diff = curr.getDate() - day + (day === 0 ? -6 : 1) + (offset * 7); // Понедельник
+  const monday = new Date(curr.setDate(diff));
+  
+  const dates = [];
+  for (let i = 0; i < 7; i++) {
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + i);
+    dates.push(d);
+  }
+  return dates;
+}
+
+function formatDate(date) {
+  return date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
+}
+
+function formatDateKey(date) {
+  return date.toISOString().split('T')[0]; // YYYY-MM-DD
+}
+
+function isEvenWeek(date) {
+  // Простая эвристика: номер недели в году
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(),0,1));
+  const weekNo = Math.ceil((((d - yearStart) / 86400000) + 1)/7);
+  return weekNo % 2 === 0;
+}
+
+// ============ ДАННЫЕ ============
+let baseSchedule = JSON.parse(localStorage.getItem('baseSchedule') || '{}');
+let dailyNotes = JSON.parse(localStorage.getItem('dailyNotes') || '{}');
+
+['even', 'odd'].forEach(w => {
+  if (!baseSchedule[w]) baseSchedule[w] = {};
+  DAYS.forEach((_, i) => { if (!baseSchedule[w][i]) baseSchedule[w][i] = []; });
+});
+
+let currentDayIdx = 0;
+let currentLessonIdx = null;
+let editingLesson = null;
+let currentDateKey = '';
+
+// ============ IndexedDB для файлов ============
+let db;
+function openDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open('uchebaDB', 1);
+    req.onupgradeneeded = e => {
+      if (!e.target.result.objectStoreNames.contains('files')) {
+        e.target.result.createObjectStore('files', { keyPath: 'id' });
+      }
+    };
+    req.onsuccess = e => { db = e.target.result; resolve(db); };
+    req.onerror = e => reject(e);
+  });
+}
+function saveFile(id, file) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction('files', 'readwrite');
+    tx.objectStore('files').put({ id, name: file.name, type: file.type, data: file });
+    tx.oncomplete = () => resolve();
+    tx.onerror = e => reject(e);
+  });
+}
+function getFile(id) {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction('files', 'readonly');
+    const req = tx.objectStore('files').get(id);
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = e => reject(e);
+  });
+}
+function deleteFile(id) {
+  return new Promise(resolve => {
+    const tx = db.transaction('files', 'readwrite');
+    tx.objectStore('files').delete(id);
+    tx.oncomplete = () => resolve();
+  });
+}
+
+// ============ РЕНДЕР ============
+function renderHeader() {
+  const dates = getWeekDates(weekOffset);
+  const startStr = formatDate(dates[0]);
+  const endStr = formatDate(dates[6]);
+  document.getElementById('weekDates').textContent = `${startStr} – ${endStr}`;
+  
+  const weekType = isEvenWeek(dates[0]) ? 'Чётная неделя' : 'Нечётная неделя';
+  document.getElementById('weekType').textContent = weekType;
+}
+
+function renderSchedule() {
+  renderHeader();
+  const grid = document.getElementById('daysGrid');
+  grid.innerHTML = '';
+  const dates = getWeekDates(weekOffset);
+  const weekType = isEvenWeek(dates[0]) ? 'even' : 'odd';
+
+  DAYS.forEach((day, dayIdx) => {
+    const dateKey = formatDateKey(dates[dayIdx]);
+    const baseLessons = baseSchedule[weekType][dayIdx] || [];
+    
+    const card = document.createElement('div');
+    card.className = 'day-card';
+    card.innerHTML = `<h3>${day}</h3><div class="day-date">${formatDate(dates[dayIdx])}</div>`;
+    
+    if (baseLessons.length === 0) {
+      card.innerHTML += `<div class="empty">Нет пар</div>`;
+    } else {
+      baseLessons.forEach((lesson, idx) => {
+        const note = (dailyNotes[dateKey] && dailyNotes[dateKey][idx]) || {};
+        const div = document.createElement('div');
+        div.className = 'lesson';
+        let markers = '';
+        if (note.homework) markers += '<span class="marker hw">HW</span>';
+        if (note.files && note.files.length) markers += `<span class="marker fl">Файлы: ${note.files.length}</span>`;
+        
+        div.innerHTML = `
+          <div class="lesson-markers">${markers}</div>
+          <div class="lesson-time">${lesson.time || 'Время не указано'}</div>
+          <div class="lesson-name">${lesson.name || 'Без названия'}</div>
+          <div class="lesson-teacher">${lesson.teacher || ''}${lesson.room ? ' · ауд. ' + lesson.room : ''}</div>
+          <button class="delete-btn" onclick="event.stopPropagation(); deleteLesson('${weekType}', ${dayIdx}, ${idx})">Удалить</button>
+        `;
+        div.onclick = () => openLessonModal(weekType, dayIdx, idx, dateKey);
+        card.appendChild(div);
+      });
+    }
+    
+    const addBtn = document.createElement('button');
+    addBtn.className = 'add-btn';
+    addBtn.textContent = '+ Добавить пару в шаблон';
+    addBtn.onclick = () => openLessonModal(weekType, dayIdx, null, dateKey);
+    card.appendChild(addBtn);
+    grid.appendChild(card);
+  });
+}
+
+function renderDeadlines() {
+  const list = document.getElementById('deadlinesList');
+  list.innerHTML = '';
+  
+  const upcoming = [];
+  const today = new Date();
+  today.setHours(0,0,0,0);
+
+  for (const dateKey in dailyNotes) {
+    const dDate = new Date(dateKey);
+    if (dDate >= today) {
+      const weekType = isEvenWeek(dDate) ? 'even' : 'odd';
+      const dayIdx = dDate.getDay() === 0 ? 6 : dDate.getDay() - 1;
+      const notes = dailyNotes[dateKey];
+      
+      for (const idx in notes) {
+        const note = notes[idx];
+        const base = (baseSchedule[weekType][dayIdx] && baseSchedule[weekType][dayIdx][idx]) || {};
+        if (note.homework || (note.links && note.links.length) || (note.files && note.files.length)) {
+          upcoming.push({
+            date: dDate,
+            dateKey: dateKey,
+            dayName: DAYS[dayIdx],
+            subject: base.name || 'Предмет',
+            time: base.time || '',
+            ...note
+          });
+        }
+      }
+    }
+  }
+
+  upcoming.sort((a, b) => a.date - b.date);
+
+  if (upcoming.length === 0) {
+    list.innerHTML = `<div class="empty">Нет предстоящих задач 🎉<br>Можно отдохнуть!</div>`;
+    return;
+  }
+
+  upcoming.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'deadline-item';
+    
+    let linksHtml = '';
+    if (item.links && item.links.length) {
+      linksHtml = '<div class="deadline-links">' + 
+        item.links.map(l => `<a href="${l}" target="_blank" class="deadline-link">Ссылка</a>`).join('') + 
+        '</div>';
+    }
+
+    div.innerHTML = `
+      <div class="deadline-date">${item.dayName}, ${formatDate(item.date)} ${item.time ? '· ' + item.time : ''}</div>
+      <div class="deadline-subject">${item.subject}</div>
+      ${item.homework ? `<div class="deadline-hw">${item.homework}</div>` : ''}
+      ${linksHtml}
+    `;
+    list.appendChild(div);
+  });
+}
+
+function changeWeek(direction) {
+  weekOffset += direction;
+  renderSchedule();
+}
+
+// ============ МОДАЛКА ============
+function openLessonModal(weekType, dayIdx, lessonIdx, dateKey) {
+  currentDayIdx = dayIdx;
+  currentLessonIdx = lessonIdx;
+  currentDateKey = dateKey;
+  
+  const base = lessonIdx !== null ? baseSchedule[weekType][dayIdx][lessonIdx] : {};
+  const note = (dailyNotes[dateKey] && dailyNotes[dateKey][lessonIdx]) || { links: [], files: [] };
+  
+  editingLesson = { base: {...base}, note: {...note} };
+
+  const dateObj = new Date(dateKey);
+  document.getElementById('modalTitle').textContent = `${DAYS[dayIdx]}, ${formatDate(dateObj)}`;
+  document.getElementById('dateSpecificTitle').textContent = `Материалы на ${formatDate(dateObj)}`;
+  
+  slotSelect.value = editingLesson.base.slot !== undefined && editingLesson.base.slot !== null ? editingLesson.base.slot : '';
+  document.getElementById('lessonName').value = editingLesson.base.name || '';
+  document.getElementById('lessonTeacher').value = editingLesson.base.teacher || '';
+  document.getElementById('lessonRoom').value = editingLesson.base.room || '';
+  document.getElementById('lessonHomework').value = editingLesson.note.homework || '';
+  document.getElementById('newLink').value = '';
+  
+  renderLinks();
+  renderFiles();
+  document.getElementById('lessonModal').classList.add('active');
+}
+
+function closeModal() {
+  document.getElementById('lessonModal').classList.remove('active');
+  editingLesson = null;
+}
+
+function addLink() {
+  const url = document.getElementById('newLink').value.trim();
+  if (!url) return;
+  editingLesson.note.links = editingLesson.note.links || [];
+  editingLesson.note.links.push(url);
+  document.getElementById('newLink').value = '';
+  renderLinks();
+}
+
+function removeLink(idx) {
+  editingLesson.note.links.splice(idx, 1);
+  renderLinks();
+}
+
+function renderLinks() {
+  const list = document.getElementById('linksList');
+  list.innerHTML = '';
+  (editingLesson.note.links || []).forEach((url, i) => {
+    const div = document.createElement('div');
+    div.className = 'link-item';
+    div.innerHTML = `<a href="${url}" target="_blank">${url}</a><button class="mini-del" onclick="removeLink(${i})">Удалить</button>`;
+    list.appendChild(div);
+  });
+}
+
+async function renderFiles() {
+  const list = document.getElementById('filesList');
+  list.innerHTML = '';
+  for (const f of (editingLesson.note.files || [])) {
+    const div = document.createElement('div');
+    div.className = 'file-item';
+    div.innerHTML = `<a href="#" onclick="downloadFile('${f.id}', '${f.name.replace(/'/g,"\\'")}'); return false;">${f.name}</a><button class="mini-del" onclick="removeFile('${f.id}')">Удалить</button>`;
+    list.appendChild(div);
+  }
+}
+
+async function downloadFile(id, name) {
+  const file = await getFile(id);
+  if (!file) return alert('Файл не найден');
+  const url = URL.createObjectURL(file.data);
+  const a = document.createElement('a');
+  a.href = url; a.download = name; a.click();
+  URL.revokeObjectURL(url);
+}
+
+async function removeFile(id) {
+  editingLesson.note.files = editingLesson.note.files.filter(f => f.id !== id);
+  await deleteFile(id);
+  renderFiles();
+}
+
+document.getElementById('fileInput').addEventListener('change', async (e) => {
+  for (const file of e.target.files) {
+    const id = 'f_' + Date.now() + '_' + Math.random().toString(36).slice(2);
+    await saveFile(id, file);
+    editingLesson.note.files = editingLesson.note.files || [];
+    editingLesson.note.files.push({ id, name: file.name });
+  }
+  e.target.value = '';
+  renderFiles();
+});
+
+function saveLesson() {
+  const slotIdx = slotSelect.value;
+  const slot = slotIdx !== '' ? TIME_SLOTS[parseInt(slotIdx)] : null;
+  
+  const weekType = isEvenWeek(new Date(currentDateKey)) ? 'even' : 'odd';
+  
+  editingLesson.base.slot = slotIdx !== '' ? parseInt(slotIdx) : null;
+  editingLesson.base.time = slot ? slot.time : '';
+  editingLesson.base.name = document.getElementById('lessonName').value.trim();
+  editingLesson.base.teacher = document.getElementById('lessonTeacher').value.trim();
+  editingLesson.base.room = document.getElementById('lessonRoom').value.trim();
+  
+  if (!editingLesson.base.name) return alert('Введи название предмета');
+  if (editingLesson.base.slot === null && currentLessonIdx === null) return alert('Выбери время пары');
+
+  // Сохраняем шаблон
+  if (currentLessonIdx === null) {
+    baseSchedule[weekType][currentDayIdx].push(editingLesson.base);
+    baseSchedule[weekType][currentDayIdx].sort((a, b) => (a.slot || 0) - (b.slot || 0));
+    // Пересчитываем индексы, так как добавился новый элемент
+    // Для простоты, просто перерендерим и закроем
+  } else {
+    baseSchedule[weekType][currentDayIdx][currentLessonIdx] = editingLesson.base;
+  }
+
+  // Сохраняем заметки на дату
+  if (!dailyNotes[currentDateKey]) dailyNotes[currentDateKey] = {};
+  // Если это новая пара, нужно найти её новый индекс
+  let saveIdx = currentLessonIdx;
+  if (currentLessonIdx === null) {
+    saveIdx = baseSchedule[weekType][currentDayIdx].findIndex(l => l.name === editingLesson.base.name && l.time === editingLesson.base.time);
+  }
+  
+  dailyNotes[currentDateKey][saveIdx] = editingLesson.note;
+
+  localStorage.setItem('baseSchedule', JSON.stringify(baseSchedule));
+  localStorage.setItem('dailyNotes', JSON.stringify(dailyNotes));
+  
+  renderSchedule();
+  closeModal();
+}
+
+function deleteLesson(weekType, dayIdx, idx) {
+  if (!confirm('Удалить эту пару из расписания?')) return;
+  baseSchedule[weekType][dayIdx].splice(idx, 1);
+  localStorage.setItem('baseSchedule', JSON.stringify(baseSchedule));
+  renderSchedule();
+}
+
+// ============ ВКЛАДКИ ============
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.onclick = () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+    document.getElementById(tab.dataset.tab).style.display = 'block';
+    
+    if (tab.dataset.tab === 'deadlines') renderDeadlines();
+  };
+});
+
+// ============ ЭКСПОРТ/ИМПОРТ ============
+function exportData() {
+  const data = { baseSchedule, dailyNotes, exportedAt: new Date().toISOString() };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'study-space-backup-' + new Date().toISOString().slice(0,10) + '.json';
+  a.click();
+}
+
+function importData(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (data.baseSchedule) baseSchedule = data.baseSchedule;
+      if (data.dailyNotes) dailyNotes = data.dailyNotes;
+      localStorage.setItem('baseSchedule', JSON.stringify(baseSchedule));
+      localStorage.setItem('dailyNotes', JSON.stringify(dailyNotes));
+      renderSchedule();
+      alert('Данные успешно импортированы!');
+    } catch (err) {
+      alert('Ошибка импорта: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+}
+
+function clearAllData() {
+  if (!confirm('Удалить ВСЕ данные?')) return;
+  if (!confirm('Ты уверен?')) return;
+  localStorage.removeItem('baseSchedule');
+  localStorage.removeItem('dailyNotes');
+  location.reload();
+}
+
+// ============ СТАРТ ============
+openDB().then(() => {
+  renderSchedule();
+});
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js')
+      .then(reg => console.log('SW ok'))
+      .catch(err => console.log('SW err:', err));
+  });
+}
+</script>
+</body>
+</html>
